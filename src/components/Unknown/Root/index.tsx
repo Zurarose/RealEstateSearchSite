@@ -14,6 +14,7 @@ const Root: React.FC = () => {
     firstValuePromise,
   } = useUser();
   const [isUserLoaded, setIsUserLoaded] = useState(false);
+
   const isLogged = !!user;
   useEffect(() => {
     firstValuePromise.then(() => setIsUserLoaded(true));
@@ -43,7 +44,8 @@ const Root: React.FC = () => {
   return (
     <GuestLayout>
       <Switch>
-        <Route exact path="/login" component={SignInScreen} />
+        <Route exact path="/" component={() => <Redirect to="/login" />} />
+        <Route path="/login" component={SignInScreen} />
         <Route path="*" component={NotFoundScreen} />
       </Switch>
     </GuestLayout>
