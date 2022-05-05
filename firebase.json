@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "vaypost-94234",
     "public": "build",
     "ignore": [
       "firebase.json",
