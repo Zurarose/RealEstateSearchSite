@@ -13,7 +13,7 @@ import { makeStyles } from '@mui/styles';
 import { useFirebaseApp } from 'reactfire';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import vaypostLogo from '../../images/vaypostLogo.svg';
+import vaypostLogo from '../../assets/images/vaypostLogo.svg';
 import { UIContext } from '../../../Unknown/UIContext';
 
 const useStyles = makeStyles({
@@ -43,25 +43,15 @@ const useStyles = makeStyles({
   },
 });
 
-const validationSchema = yup.object({
+const validation = yup.object({
   email: yup
     .string()
     .email('Enter a valid email')
     .required('Email is required'),
-  name: yup
-    .string()
-    .required('Full name is required')
-    .matches(
-      /^[A-Z][a-zA-Z]{3} [A-Z][a-zA-Z]*$/,
-      'Please enter valid full name',
-    ),
-  password: yup.string().required('Password is required').min(12),
-  repeatPassword: yup
-    .string()
-    .oneOf([yup.ref('password'), null], 'Passwords must match'),
+  password: yup.string().required('Password is required'),
 });
 
-const SignUp: React.FC = () => {
+const SignIn: React.FC = () => {
   const classes = useStyles();
   const firebase = useFirebaseApp();
   const { setAlert } = useContext(UIContext);
@@ -70,26 +60,14 @@ const SignUp: React.FC = () => {
   const formik = useFormik({
     initialValues: {
       email: '',
-      name: '',
       password: '',
-      repeatPassword: '',
     },
-    validationSchema,
+    validationSchema: validation,
     onSubmit: async (values) => {
       try {
         await firebase
           .auth()
-          .createUserWithEmailAndPassword(values.email, values.password)
-          .then((result) => {
-            result.user!.updateProfile({
-              displayName: values.name,
-            });
-          });
-        setAlert({
-          show: true,
-          snackType: 'snack',
-          message: 'Welcome on board 🚀',
-        });
+          .signInWithEmailAndPassword(values.email, values.password);
       } catch (error) {
         setAlert({
           show: true,
@@ -99,18 +77,20 @@ const SignUp: React.FC = () => {
       }
     },
   });
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
   return (
     <>
-      <Box sx={{ mt: 4 }}>
+      <Box sx={{ mt: 5 }}>
         <img alt="complex" src={vaypostLogo} />
       </Box>
-      <Box sx={{ mt: 4 }}>
-        <Typography className={classes.typography}>Register</Typography>
+      <Box sx={{ mt: 5 }}>
+        <Typography className={classes.typography}>Login</Typography>
       </Box>
-      <Box sx={{ mt: 4, width: '55%' }}>
+      <Box sx={{ mt: 5, width: '55%' }}>
         <form onSubmit={formik.handleSubmit}>
           <TextField
             InputLabelProps={{ shrink: true }}
@@ -127,22 +107,7 @@ const SignUp: React.FC = () => {
             helperText={formik.touched.email && formik.errors.email}
           />
           <TextField
-            sx={{ mt: 2 }}
-            InputLabelProps={{ shrink: true }}
-            InputProps={{ disableUnderline: true }}
-            fullWidth
-            id="name"
-            name="name"
-            label="Full name"
-            variant="filled"
-            onBlur={formik.handleBlur}
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            error={formik.touched.name && Boolean(formik.errors.name)}
-            helperText={formik.touched.name && formik.errors.name}
-          />
-          <TextField
-            sx={{ mt: 2 }}
+            sx={{ mt: 5 }}
             type={showPassword ? 'text' : 'password'}
             InputLabelProps={{ shrink: true }}
             InputProps={{
@@ -171,62 +136,27 @@ const SignUp: React.FC = () => {
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
           />
-          <TextField
-            sx={{ mt: 2 }}
-            type={showPassword ? 'text' : 'password'}
-            InputLabelProps={{ shrink: true }}
-            InputProps={{
-              disableUnderline: true,
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    sx={{ mt: 2 }}
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            fullWidth
-            id="repeatPassword"
-            name="repeatPassword"
-            label="Repeat password"
-            variant="filled"
-            onBlur={formik.handleBlur}
-            value={formik.values.repeatPassword}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.repeatPassword &&
-              Boolean(formik.errors.repeatPassword)
-            }
-            helperText={
-              formik.touched.repeatPassword && formik.errors.repeatPassword
-            }
-          />
           <Button
             fullWidth
             disabled={formik.isSubmitting}
             type="submit"
-            sx={{ mt: 2 }}
+            sx={{ mt: 5 }}
             variant="contained"
           >
-            REGISTER
+            Login
           </Button>
         </form>
       </Box>
       <Box sx={{ mb: 2 }} className={classes.box}>
         <Typography sx={{ mb: 2 }} className={classes.paragraph}>
-          Already have account?
+          Don’t have an account?
         </Typography>
-        <Link className={classes.link} to="/login">
-          LOGIN
+        <Link className={classes.link} to="/register">
+          REGISTER
         </Link>
       </Box>
     </>
   );
 };
 
-export default SignUp;
+export default SignIn;
