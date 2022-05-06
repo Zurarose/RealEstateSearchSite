@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react';
 import MuiAlert, { AlertColor } from '@mui/lab/Alert';
-import { Snackbar } from '@mui/material';
+import { Snackbar, SnackbarContent } from '@mui/material';
 
 export const UIContext = createContext<UIContextProps>({} as UIContextProps);
 
@@ -12,6 +12,7 @@ interface AlertProps {
   show: boolean;
   severity?: AlertColor;
   message?: string;
+  snackType?: 'snack' | '';
 }
 
 export const UIContextProvider: React.FC = ({ children }) => {
@@ -19,6 +20,7 @@ export const UIContextProvider: React.FC = ({ children }) => {
     show: false,
     severity: 'info',
     message: '',
+    snackType: '',
   });
   const handleClose = () =>
     setAlert({
@@ -28,11 +30,29 @@ export const UIContextProvider: React.FC = ({ children }) => {
   return (
     <UIContext.Provider value={{ setAlert }}>
       {children}
-      <Snackbar open={alert.show} autoHideDuration={4000} onClose={handleClose}>
-        <MuiAlert elevation={6} variant="filled" severity={alert.severity}>
-          {alert.message}
-        </MuiAlert>
-      </Snackbar>
+      {alert.snackType === 'snack' ? (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={alert.show}
+          autoHideDuration={4000}
+          onClose={handleClose}
+        >
+          <SnackbarContent
+            sx={{ display: 'flex', justifyContent: 'center' }}
+            message={alert.message}
+          />
+        </Snackbar>
+      ) : (
+        <Snackbar
+          open={alert.show}
+          autoHideDuration={4000}
+          onClose={handleClose}
+        >
+          <MuiAlert elevation={6} variant="filled" severity={alert.severity}>
+            {alert.message}
+          </MuiAlert>
+        </Snackbar>
+      )}
     </UIContext.Provider>
   );
 };

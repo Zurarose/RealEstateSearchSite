@@ -9,40 +9,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
 import MenuItem from '@mui/material/MenuItem';
 import { useUser, useFirebaseApp } from 'reactfire';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { UIContext } from '../UIContext';
 import clearFirestoreCache from '../../../common/clearFirestoreCache';
-
-function stringToColor(string: string) {
-  let hash = 0;
-  let i;
-  for (i = 0; i < string.length; i += 1) {
-    // eslint-disable-next-line no-bitwise
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  let color = '#';
-  for (i = 0; i < 3; i += 1) {
-    // eslint-disable-next-line no-bitwise
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  return color;
-}
-
-function stringAvatar(name: string) {
-  let shortName: string;
-  if (name.split(' ').length > 1) {
-    shortName = `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`;
-  } else {
-    shortName = `${name.split(' ')[0][0]}`;
-  }
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    children: shortName,
-  };
-}
+import stringAvatar from '../../../common/stringAvatar';
 
 const HomeScreen: React.FC = () => {
   const { data: user } = useUser();
@@ -73,6 +43,11 @@ const HomeScreen: React.FC = () => {
     }
   }, [firebase, setAlert]);
 
+  const stringName = useMemo(
+    () => stringAvatar(user.displayName),
+    [user.displayName],
+  );
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -90,15 +65,16 @@ const HomeScreen: React.FC = () => {
             Vaypost
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              {user.displayName ? (
-                <Avatar {...stringAvatar(user.displayName)} />
-              ) : (
-                <Avatar {...stringAvatar('U')} />
-              )}
+            <IconButton
+              onClick={handleOpenUserMenu}
+              sx={{ p: 0, bgcolor: 'grey' }}
+            >
+              <Avatar>
+                <Typography>{stringName}</Typography>
+              </Avatar>
             </IconButton>
             <Menu
-              sx={{ mt: '45px' }}
+              sx={{ mt: 4 }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
