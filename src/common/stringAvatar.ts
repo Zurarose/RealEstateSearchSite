@@ -1,12 +1,15 @@
-const stringAvatar = (name: string | null) => {
+function stringAvatar(name: string | null): string {
   if (!name) return 'U';
+  const trimmedName = name.trimLeft().trimRight();
   let shortName: string;
-  if (name.split(' ').length > 1) {
-    shortName = `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`;
+  if (trimmedName.split(' ').length > 1) {
+    shortName = `${trimmedName.split(' ')[0][0]}${
+      trimmedName.split(' ')[1][0]
+    }`;
   } else {
-    shortName = `${name.split(' ')[0][0]}`;
+    shortName = `${trimmedName.split(' ')[0][0]}`;
   }
   return shortName;
-};
+}
 
 export default stringAvatar;

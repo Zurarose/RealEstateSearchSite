@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import {
   Box,
+  Container,
   IconButton,
   InputAdornment,
   TextField,
@@ -8,50 +9,14 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
-import { makeStyles } from '@mui/styles';
+import { Link as RouterLink } from 'react-router-dom';
 import { useFirebaseApp } from 'reactfire';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
-import vaypostLogo from '../../assets/images/vaypostLogo.svg';
-import { UIContext } from '../../../Unknown/UIContext';
+import { UIContext } from '../../Unknown/UIContext';
+import { validationSignInSchema } from '../validators/validators';
+import useStyles from '../styles/styles';
 
-const useStyles = makeStyles({
-  typography: {
-    textAlign: 'center',
-    fontWeight: 700,
-    fontSize: '40px',
-    letterSpacing: '-1.5px',
-  },
-  paragraph: {
-    textAlign: 'center',
-    fontWeight: 600,
-    letterSpacing: '-1.5px',
-  },
-  link: {
-    textAlign: 'center',
-    textDecoration: 'none',
-    color: '#F50057',
-    fontWeight: 500,
-    letterSpacing: '0.46px',
-  },
-  box: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-  },
-});
-
-const validation = yup.object({
-  email: yup
-    .string()
-    .email('Enter a valid email')
-    .required('Email is required'),
-  password: yup.string().required('Password is required'),
-});
-
-const SignIn: React.FC = () => {
+const SignInScreen: React.FC = () => {
   const classes = useStyles();
   const firebase = useFirebaseApp();
   const { setAlert } = useContext(UIContext);
@@ -62,7 +27,7 @@ const SignIn: React.FC = () => {
       email: '',
       password: '',
     },
-    validationSchema: validation,
+    validationSchema: validationSignInSchema,
     onSubmit: async (values) => {
       try {
         await firebase
@@ -85,12 +50,9 @@ const SignIn: React.FC = () => {
   return (
     <>
       <Box sx={{ mt: 5 }}>
-        <img alt="complex" src={vaypostLogo} />
+        <Typography variant="h3">Login</Typography>
       </Box>
-      <Box sx={{ mt: 5 }}>
-        <Typography className={classes.typography}>Login</Typography>
-      </Box>
-      <Box sx={{ mt: 5, width: '55%' }}>
+      <Container maxWidth="xs" sx={{ mt: 4 }}>
         <form onSubmit={formik.handleSubmit}>
           <TextField
             InputLabelProps={{ shrink: true }}
@@ -146,17 +108,17 @@ const SignIn: React.FC = () => {
             Login
           </Button>
         </form>
-      </Box>
-      <Box sx={{ mb: 2 }} className={classes.box}>
-        <Typography sx={{ mb: 2 }} className={classes.paragraph}>
+      </Container>
+      <Box sx={{ mb: 2 }} className={classes.myBox}>
+        <Typography sx={{ mb: 2 }} variant="h5">
           Don’t have an account?
         </Typography>
-        <Link className={classes.link} to="/register">
+        <Button component={RouterLink} to="/register">
           REGISTER
-        </Link>
+        </Button>
       </Box>
     </>
   );
 };
 
-export default SignIn;
+export default SignInScreen;

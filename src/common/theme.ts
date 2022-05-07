@@ -8,6 +8,25 @@ const defaultTheme = createTheme({
       dark: '#db004c',
     },
   },
+  typography: {
+    h3: {
+      textAlign: 'center',
+      fontWeight: 700,
+      fontSize: '40px',
+      letterSpacing: '-1.5px',
+    },
+    h4: {
+      fontSize: '28px',
+      fontWeight: 600,
+      letterSpacing: '0.15px',
+    },
+    h5: {
+      fontSize: '14px',
+      textAlign: 'center',
+      fontWeight: 600,
+      letterSpacing: '-1.5px',
+    },
+  },
 });
 
 export default defaultTheme;

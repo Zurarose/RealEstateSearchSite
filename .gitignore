@@ -24,10 +24,4 @@ yarn-error.log*
 
 .eslintcache
 .firebase
-.idea
-.editorconfig
-.babelrc
-.eslintrc.js
-.firebaserc
-.prettierrc
 *-debug.log
