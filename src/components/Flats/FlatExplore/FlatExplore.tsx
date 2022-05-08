@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Box,
   Container,
@@ -9,21 +15,26 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import Grid from '@mui/material/Grid';
+import { useHistory, useLocation } from 'react-router-dom';
+import { DocumentData } from '@firebase/firestore-types';
 import useStyles from './styles/styles';
-import getFlats from '../../../common/getFlats';
 import googleApi from '../../../common/googleApi';
 import { UIContext } from '../../Unknown/UIContext';
-import MyCard from '../assets/utils/MyCard';
+import MyCard from '../assets/utils/myCard/MyCard';
+import filterByCity from '../../../common/filterByCity';
 
 const FlatExplore: React.FC = () => {
   const classes = useStyles();
+  const history = useHistory();
   const { setAlert } = useContext(UIContext);
-  const [flats, setFlats] = useState<any[]>([]);
+  const [flats, setFlats] = useState<DocumentData[]>([]);
+  const { search } = useLocation();
+  const searchField = useRef(new URLSearchParams(search).get('city'));
 
   useEffect(() => {
     (async () => {
       try {
-        const result = await getFlats();
+        const result = await filterByCity(searchField.current);
         if (result) {
           setFlats(result);
         } else throw new Error('No data');
@@ -37,26 +48,83 @@ const FlatExplore: React.FC = () => {
     })();
   }, [setAlert]);
 
-  const handleSearch = async () => {};
+  const changeLocation = useCallback(
+    (location) => {
+      if (location) {
+        history.push({
+          search: `?city=${location}`,
+        });
+      } else {
+        history.push({
+          search: ``,
+        });
+      }
+    },
+    [history],
+  );
+
+  const handleSearch = useCallback(
+    async (value) => {
+      try {
+        const result = await filterByCity(value);
+        if (result) {
+          setFlats(result);
+        } else throw new Error('No data');
+      } catch (error) {
+        setAlert({
+          show: true,
+          severity: 'error',
+          message: error.message,
+        });
+      }
+    },
+    [setAlert],
+  );
+
+  const handleSet = useCallback(
+    async (value) => {
+      searchField.current = value;
+      changeLocation(value);
+      await handleSearch(value);
+    },
+    [changeLocation, handleSearch],
+  );
+
+  const handleChange = useCallback(
+    async (e) => {
+      if (!e.target.value.length) {
+        await handleSearch(null);
+        changeLocation(e.target.value);
+        return;
+      }
+      googleApi(e.target, handleSet);
+    },
+    [changeLocation, handleSearch, handleSet],
+  );
+
   return (
     <Container maxWidth="xl">
       <Grid container maxWidth="lg">
         <Grid item xs={6} className={classes.myBox}>
           <TextField
+            sx={{ mt: 2 }}
+            defaultValue={searchField.current}
             className={classes.stickyField}
             onChange={(e) => {
-              googleApi(e.target);
+              searchField.current = e.target.value;
+              handleChange(e);
             }}
-            sx={{ mt: 2 }}
             InputLabelProps={{ shrink: true }}
             InputProps={{
               disableUnderline: true,
               endAdornment: (
-                <InputAdornment position="end">
+                <InputAdornment
+                  position="end"
+                  onClick={() => handleSearch(searchField.current)}
+                >
                   <IconButton
                     sx={{ mt: 2 }}
                     aria-label="toggle password visibility"
-                    onClick={handleSearch}
                     edge="end"
                   >
                     <SearchIcon />
@@ -64,18 +132,23 @@ const FlatExplore: React.FC = () => {
                 </InputAdornment>
               ),
             }}
+            id="searchField"
+            placeholder="Type something"
             label="City"
             variant="filled"
           />
-          <Box sx={{ mt: 5 }}>
+          <Box sx={{ mt: 5, mb: 5 }}>
             <Typography variant="h4">Flats to rent</Typography>
           </Box>
           {flats &&
             flats.map((item) => {
               return (
                 <MyCard
-                  key={item.address + item.latitude + item.longitude}
-                  {...item}
+                  key={item.photoUrl + item.address}
+                  address={item.address}
+                  dailyPriceUsd={item.dailyPriceUsd}
+                  description={item.description}
+                  photoUrl={item.photoUrl}
                 />
               );
             })}

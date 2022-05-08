@@ -28,43 +28,23 @@
     <style>
       .pac-container {
         background-color: #fff;
-        position: absolute!important;
+        position: fixed !important;
+        top: 136px !important;
         z-index: 1000;
         border-radius: 3px;
         border: 1px solid #d9d9d9;
         font-family: Roboto, sans-serif;
         box-shadow: none;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        overflow: hidden;
       }
-
       .pac-logo:after {
         content: "";
         padding: 0;
         height: 0;
         display: block;
       }
-      .hdpi.pac-logo:after {
-        background-image: none;
-      }
-      .pac-item {
-        cursor: default;
-        padding: 0 4px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        line-height: 30px;
-        text-align: left;
-        border-top: 1px solid #e6e6e6;
-        font-size: 11px;
-        color: #999
-      }
       .pac-item:hover {
         background-color: #f5f5f5
       }
-      .pac-item-selected,
       .pac-item-selected:hover {
         background-color: #f5f5f5
       }
@@ -73,19 +53,14 @@
       }
       .pac-item-query {
         font-size: 14px;
-        padding-right: 3px;
+        padding-left: 10px;
         color: #000
       }
       .pac-icon {
-        width: 0px;
-        height: 0px;
-        margin-right: 16px;
-        margin-top: 6px;
+        width: 0;
+        height: 0;
         display: inline-block;
         vertical-align: top;
-      }
-      .pac-placeholder {
-        color: gray
       }
     </style>
   </head>

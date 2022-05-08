@@ -26,6 +26,9 @@ const defaultTheme = createTheme({
       fontWeight: 600,
       letterSpacing: '-1.5px',
     },
+    subtitle2: {
+      fontSize: '10px',
+    },
   },
 });
 
