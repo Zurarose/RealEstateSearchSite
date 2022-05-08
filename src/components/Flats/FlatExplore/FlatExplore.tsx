@@ -92,11 +92,10 @@ const FlatExplore: React.FC = () => {
 
   const handleChange = useCallback(
     async (e) => {
-      if (!e.target.value.length) {
+      if (!e.target.value) {
         await handleSearch(null);
-        changeLocation(e.target.value);
-        return;
       }
+      changeLocation(e.target.value);
       googleApi(e.target, handleSet);
     },
     [changeLocation, handleSearch, handleSet],
