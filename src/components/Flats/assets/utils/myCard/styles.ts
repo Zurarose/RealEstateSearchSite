@@ -1,6 +1,13 @@
 import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles({
+  cardImg: {
+    verticalAlign: 'middle',
+    objectPosition: '45% 455%',
+    objectFit: 'cover',
+    width: '100%',
+    height: '100%',
+  },
   threeLinesField: {
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: 3,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Card,
@@ -7,55 +7,64 @@ import {
   Grid,
   Typography,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import useStyles from './styles';
 
-interface PropsType {
-  address: string;
-  description: string;
-  dailyPriceUsd: number;
-  photoUrl: string;
-}
-
-const MyCard = ({
-  address,
-  description,
-  dailyPriceUsd,
-  photoUrl,
-}: PropsType): ReactJSXElement => {
+const MyCard = ({ ...props }: any): ReactJSXElement => {
   const classes = useStyles();
+  const [elevation, setElevation] = useState(3);
+  const history = useHistory();
+  const { search } = useLocation();
+
+  const handleClick = () => {
+    setElevation(1);
+    props.setSelectedItem({
+      latitude: props.latitude,
+      longitude: props.longitude,
+    });
+    const searchField = new URLSearchParams(search).get('city');
+    const path = `/flats/${props.id}`;
+    if (searchField) {
+      history.push({
+        pathname: path,
+        search: `?city=${searchField}`,
+      });
+    } else {
+      history.push({
+        pathname: path,
+      });
+    }
+  };
 
   return (
     <>
-      <Card sx={{ mt: 2 }} className={classes.flexBoxCard}>
+      <Card
+        sx={{ mt: 2 }}
+        className={classes.flexBoxCard}
+        elevation={elevation}
+      >
         <Grid container>
           <Grid item xs={6}>
             <CardMedia
-              sx={{
-                verticalAlign: 'middle',
-                objectPosition: '45% 455%',
-                objectFit: 'cover',
-                width: '100%',
-                height: '100%',
-              }}
+              className={classes.cardImg}
               component="img"
-              image={photoUrl}
+              image={props.photoUrl}
             />
           </Grid>
           <Grid item xs={6}>
             <Box className={classes.cardBody}>
               <CardContent className={classes.fullHeight}>
                 <Typography component="div" variant="h4">
-                  {`$${dailyPriceUsd} / night`}
+                  {`$${props.dailyPriceUsd} / night`}
                 </Typography>
                 <Typography
                   sx={{ mt: 2 }}
                   variant="subtitle1"
                   color="text.secondary"
                 >
-                  {address}
+                  {props.address}
                 </Typography>
                 <Typography
                   className={classes.threeLinesField}
@@ -63,17 +72,17 @@ const MyCard = ({
                   color="text.secondary"
                   component="div"
                 >
-                  {description}
+                  {props.description}
                 </Typography>
               </CardContent>
               <Box>
                 <Button
+                  onClick={handleClick}
+                  onBlur={() => setElevation(3)}
                   sx={{ ml: 2, mb: 2 }}
                   disableRipple
                   className={classes.cardBtn}
-                  component={RouterLink}
                   variant="text"
-                  to="/flats"
                 >
                   DETAILS
                 </Button>

@@ -11,8 +11,20 @@ const useStyles = makeStyles({
   myBox: {
     display: 'flex',
     flexDirection: 'column',
+    alignContent: 'center',
+  },
+  mySideBar: {
+    display: 'flex',
     justifyContent: 'center',
     alignContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: 'calc(100vh - 65px)',
+    position: 'sticky',
+    backgroundColor: '#dbdbdb',
+    color: 'white',
+    top: '65px',
+    zIndex: 2,
   },
 });
 
